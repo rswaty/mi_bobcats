@@ -61,7 +61,7 @@ ncal <- landfireAPI(products,
                     resolution,
                     path = save_file)
 
-evt <- rast("data/lf_evt.tif")
+evt <- rast("data/lf_evt.tif") # I used tempdir() to find data, then manually unzipped, moved and renamed
 plot(evt)
 
 ## Try to extract ----
