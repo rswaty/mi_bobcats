@@ -52,31 +52,58 @@ resolution <- 30
 
 
 # R specific arguments
-save_file <- tempfile(fileext = ".zip")
+temp_file <- tempfile(fileext = ".zip")
 
 # call API
 ncal <- landfireAPI(products,
                     aoi,
                     projection,
                     resolution,
-                    path = save_file)
+                    path = temp_file)
 
-evt <- rast("data/lf_evt.tif") # I used tempdir() to find data, then manually unzipped, moved and renamed
+# Define the destination path
+dest_file <- file.path("data", "landfire_data.zip")
+
+# Move and rename the file
+file.rename(temp_file, dest_file)
+
+# Create a temporary directory for unzipping
+temp_dir <- tempfile()
+dir.create(temp_dir)
+
+# Unzip the file into the temporary directory
+unzip(dest_file, exdir = temp_dir)
+
+# Get the list of unzipped files
+unzipped_files <- list.files(temp_dir, full.names = TRUE)
+
+# Rename each unzipped file to "landfire_data" with its full original extension
+for (file in unzipped_files) {
+  file_name <- basename(file)
+  file_extension <- sub("^[^.]*", "", file_name)  # Extract the full extension
+  new_file_path <- file.path("data", paste0("landfire_data", file_extension))
+  file.rename(file, new_file_path)
+}
+
+# Clean up the temporary directory
+unlink(temp_dir, recursive = TRUE)
+
+# load EVT data
+evt <- rast("data/landfire_data.tif") # I used tempdir() to find data, then manually unzipped, moved and renamed
 plot(evt)
 
 ## Try to extract ----
 
-# my attempt
-male_cats_evt <- terra::extract(evt, male_ranges, df = TRUE, ID = TRUE) %>%
-  group_by(ID,  US_230EVT) %>%
-  summarize(count = n()) 
-# OK but not sure which cat belongs to which ID
 
-# Extract raster values from chatGPT
+# Extract raster values based on bobcat ranges
 male_cats_evt <- terra::extract(evt, male_ranges, df = TRUE) %>%
+  # Extract data from 'evt' based on 'male_ranges' and return as a data frame
   dplyr::mutate(LabNumber = male_ranges$LabNumber[ID]) %>%
+  # Add a new column 'LabNumber' using values from 'male_ranges$LabNumber' based on 'ID'
   group_by(LabNumber, US_230EVT) %>%
+  # Group the data by 'LabNumber' and 'US_230EVT'
   summarize(count = n())
+# Summarize the data by counting the number of occurrences for each group
 
 
 

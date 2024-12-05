@@ -1,0 +1,21 @@
+<PAMDataset>
+  <Metadata>
+    <MDI key="Creator">USGS EROS Landfire Product Service</MDI>
+    <MDI key="DataType">Thematic</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Description>US_230EVT</Description>
+    <UnitOfMeasure>Class</UnitOfMeasure>
+    <Metadata>
+      <MDI key="BandName">US_230EVT</MDI>
+      <MDI key="RepresentationType">THEMATIC</MDI>
+      <MDI key="STATISTICS_MAXIMUM">9817</MDI>
+      <MDI key="STATISTICS_MEAN">7283.5046270326</MDI>
+      <MDI key="STATISTICS_MEDIAN">nan</MDI>
+      <MDI key="STATISTICS_MINIMUM">-9999</MDI>
+      <MDI key="STATISTICS_SKIPFACTORX">1</MDI>
+      <MDI key="STATISTICS_SKIPFACTORY">1</MDI>
+      <MDI key="STATISTICS_STDDEV">2253.9646506302</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
