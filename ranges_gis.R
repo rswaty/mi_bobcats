@@ -9,10 +9,8 @@
 
 # packages
 
-library(foreign)
-library(raster)
+
 library(rlandfire)
-library(scales)
 library(sf)
 library(terra)
 library(tidyverse)
@@ -39,6 +37,10 @@ vect(male_ranges)
 plot(male_ranges)
 
 # looks reasonable
+
+# load LF EVT attributes
+
+evt_atts <- read.csv("data/LF22_EVT_230.csv")
 
 # Download and load LANDFIRE data ----
 
@@ -88,12 +90,14 @@ for (file in unzipped_files) {
 # Clean up the temporary directory
 unlink(temp_dir, recursive = TRUE)
 
+
+
+# Try to extract ----
+
+
 # load EVT data
 evt <- rast("data/landfire_data.tif") # I used tempdir() to find data, then manually unzipped, moved and renamed
 plot(evt)
-
-## Try to extract ----
-
 
 # Extract raster values based on bobcat ranges
 male_cats_evt <- terra::extract(evt, male_ranges, df = TRUE) %>%
@@ -106,7 +110,12 @@ male_cats_evt <- terra::extract(evt, male_ranges, df = TRUE) %>%
 # Summarize the data by counting the number of occurrences for each group
 
 
+# Add attributes to extracted dataframes ----
 
+male_cats_evt_atts <- male_cats_evt %>%
+  left_join(evt_atts, by = c('US_230EVT' = 'VALUE'))
+
+write.csv(male_cats_evt_atts, file = "outputs/male_cats.csv")
 
 
 
